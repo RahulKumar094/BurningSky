@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class InputDesire : MonoBehaviour
@@ -5,11 +6,11 @@ public class InputDesire : MonoBehaviour
     public static InputDesire Instance { get { return instance; } }
     private static InputDesire instance;
 
-    public Vector3 TargetPosition { get { return targetPosition; } }
-    public bool IsButtonHeld { get { return isHeld; } }
+    public Action<Vector2> PointerDragEvent;
 
-    private Vector3 targetPosition;
-    private bool inputEnabled;    
+    private Vector3 dragBeginPosition;
+    private Vector3 targetDirection;
+    private bool inputEnabled;
     private bool isHeld;
 
     void Awake()
@@ -20,7 +21,6 @@ public class InputDesire : MonoBehaviour
             Destroy(gameObject);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!inputEnabled)
@@ -29,10 +29,21 @@ public class InputDesire : MonoBehaviour
             return;
         }
 
+        //first touch
+        if (!isHeld && Input.GetMouseButton(0))
+        {
+            dragBeginPosition = Input.mousePosition;
+        }
+
         isHeld = Input.GetMouseButton(0);
         if (isHeld)
         {
-            targetPosition = Camera.main.ViewportToWorldPoint(Input.mousePosition);
+            targetDirection = Input.mousePosition - dragBeginPosition;
+            if (targetDirection.magnitude != 0)
+            {
+                PointerDragEvent?.Invoke(targetDirection.normalized);
+            }
+            dragBeginPosition = Input.mousePosition;
         }
     }
 
@@ -40,4 +51,5 @@ public class InputDesire : MonoBehaviour
     {
         inputEnabled = enable;
     }
+
 }

@@ -4,3 +4,5 @@ obj/
 Assembly-CSharp.csproj
 BurningSky.sln
 Library/
+Temp/
+.vs/
