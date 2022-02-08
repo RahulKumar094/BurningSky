@@ -1,0 +1,6 @@
+Logs/
+obj/
+.vsconfig
+Assembly-CSharp.csproj
+BurningSky.sln
+Library/
