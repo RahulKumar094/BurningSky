@@ -6,16 +6,20 @@ public class ObjectPool : MonoBehaviour
     public static ObjectPool Instance { get { return instance; } }
     private static ObjectPool instance;
 
+    public int PlayerBulletCount = 50;
+    public int EnemyBulletCount = 50;
     public GameObject PlayerBulletPrefab;
     public GameObject EnemyBulletPrefab;
     public Transform PlayerBulletContainer;
     public Transform EnemyBulletContainer;
 
-    public static int PLAYERBULLETCOUNT = 100;
-    public static int ENEMYBULLETCOUNT = 50;
+    public EnemyPoolInfo[] enemyPoolInfo = new EnemyPoolInfo[5];
 
-    private List<PlayerBullet> playerBullets = new List<PlayerBullet>();
-    private List<EnemyBullet> enemyBullets = new List<EnemyBullet>();
+    public static List<EnemyPlane> EnemyPlanes { get { return enemyPlanes; } }
+    public static List<Bullet> Bullets { get { return bullets; } }
+
+    private static List<EnemyPlane> enemyPlanes = new List<EnemyPlane>();
+    private static List<Bullet> bullets = new List<Bullet>();
 
     void Awake()
     {
@@ -27,35 +31,70 @@ public class ObjectPool : MonoBehaviour
 
     void Start()
     {
-        CreatePool();
+        CreateBulletPool();
+        CreateEnemyPool();
     }
 
-    void CreatePool()
+    void CreateBulletPool()
     {
-        for (int i = 0; i < PLAYERBULLETCOUNT; i++)
+        for (int i = 0; i < PlayerBulletCount; i++)
         {
             GameObject go = Instantiate(PlayerBulletPrefab, PlayerBulletContainer);
-            playerBullets.Add(new PlayerBullet(go.transform));
+            bullets.Add(new PlayerBullet(go.transform));
         }
 
-        for (int i = 0; i < ENEMYBULLETCOUNT; i++)
+        for (int i = 0; i < EnemyBulletCount; i++)
         {
             GameObject go = Instantiate(EnemyBulletPrefab, EnemyBulletContainer);
-            enemyBullets.Add(new EnemyBullet(go.transform));
+            bullets.Add(new EnemyBullet(go.transform));
+        }
+    }
+
+    void CreateEnemyPool()
+    {
+        for (int i = 0; i < enemyPoolInfo.Length; i++)
+        {
+            for (int j = 0; j < enemyPoolInfo[i].Count; j++)
+            {
+                GameObject go = Instantiate(enemyPoolInfo[i].Prefab, enemyPoolInfo[i].Container);
+                EnemyPlane plane = go.GetComponent<EnemyPlane>();
+                plane.alive = false;
+                enemyPlanes.Add(plane);
+                go.SetActive(false);
+            }
         }
     }
 
     public Bullet GetBullet<T>() where T : Bullet
     {
-        Bullet bullet = null;
-        if (typeof(T) == typeof(PlayerBullet))
-            bullet = playerBullets.Find(x => !x.alive);
-        else if(typeof(T) == typeof(EnemyBullet))
-            bullet = enemyBullets.Find(x => !x.alive);
-        else
-            throw new System.Exception("entry must be a type of concrete class");
+        Bullet bullet = bullets.Find(x => !x.alive && x is T);
 
         if (bullet != null) return bullet;
-        throw new System.Exception("all items in pool are in alive. consider increasing the item count or destroy unused items");
+        throw new System.Exception(string.Format("all bullets of type {0} in pool are in alive. consider increasing the item count or destroy unused items", typeof(T)));
     }
+
+    public EnemyPlane GetEnemyPlane(EnemyType type)
+    {
+        EnemyPlane plane = enemyPlanes.Find(x => !x.alive && x.type == type);
+
+        if (plane != null) return plane;
+        throw new System.Exception(string.Format("all plane of type {0} in pool are in alive. consider increasing the item count or destroy unused items", type));
+    }
+
+    public void DestroyBullet(Transform transform)
+    {
+        Bullet bullet = bullets.Find(x => x.transform == transform);
+
+        if (bullet != null)
+            bullet.Destroy();
+    }
+
+}
+
+[System.Serializable]
+public struct EnemyPoolInfo
+{
+    public int Count;
+    public GameObject Prefab;
+    public Transform Container;
 }

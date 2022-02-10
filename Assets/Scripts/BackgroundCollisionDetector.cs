@@ -1,8 +1,10 @@
 using UnityEngine;
 
-public class CollisionDetector : MonoBehaviour
+public class BackgroundCollisionDetector : MonoBehaviour
 {
     private ScrollableBackground ScrollableBackground;
+    private const string ScrollableBackgroundTag = "ScrollableBG";
+
     private void Awake()
     {
         ScrollableBackground = FindObjectOfType<ScrollableBackground>();
@@ -10,7 +12,7 @@ public class CollisionDetector : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if(other.CompareTag("ScrollableBG"))
+        if (other.CompareTag(ScrollableBackgroundTag))
             ScrollableBackground.SetNextPosition(other.transform);
     }
 }

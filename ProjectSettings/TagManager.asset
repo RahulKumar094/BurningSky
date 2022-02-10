@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - ScrollableBG
+  - Enemy
   - PlayerBullet
   - EnemyBullet
   layers:

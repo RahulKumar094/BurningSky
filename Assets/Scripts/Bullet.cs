@@ -6,8 +6,6 @@ public abstract class Bullet
     public bool alive;
     public float speed;
 
-    private Vector3 direction;
-
     public Bullet(Transform transform)
     {
         alive = false;
@@ -24,14 +22,14 @@ public abstract class Bullet
     public virtual void Shoot(Vector3 startPosition, Vector3 direction)
     {
         alive = true;
-        this.direction = direction;
         transform.position = startPosition;
+        transform.rotation = Quaternion.LookRotation(direction);
         transform.gameObject.SetActive(true);
     }
 
     public virtual void Update()
     {
-        transform.position = Vector3.Lerp(transform.position, transform.position + direction, speed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, transform.position + transform.forward, speed * Time.deltaTime);
     }
 }
 
@@ -39,7 +37,7 @@ public class PlayerBullet : Bullet
 {
     public PlayerBullet(Transform transform) : base(transform)
     {
-        speed = 80f;
+        speed = 50f;
     }
 }
 
@@ -47,6 +45,6 @@ public class EnemyBullet : Bullet
 {
     public EnemyBullet(Transform transform) : base(transform)
     {
-        speed = 20f;
+        speed = 30f;
     }
 }
