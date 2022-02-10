@@ -6,8 +6,10 @@ public class EnemySpawnManager : MonoBehaviour
     public static EnemySpawnManager Instance { get { return instance; } }
     private static EnemySpawnManager instance;
 
-    public PlaneAttribute SmallEnemyPlaneAttribute;
-    public PlaneAttribute MediumEnemyPlaneAttribute;
+    public PlaneAttribute SmallRedEnemyPlaneAttribute;
+    public PlaneAttribute SmallGreenEnemyPlaneAttribute;
+    public PlaneAttribute MediumBlueEnemyPlaneAttribute;
+    public PlaneAttribute MediumGreyEnemyPlaneAttribute;
     public PlaneAttribute BossEnemyPlaneAttribute;
     public Level[] LevelData = new Level[5];
 
@@ -64,17 +66,21 @@ public class EnemySpawnManager : MonoBehaviour
             if (sequence.type == EnemyType.SmallGreen)
             {
                 randomMultiplier = Random.Range(-1, 2);
-                rotationDelay = Random.Range(0.5f, 1.5f);
+                rotationDelay = Random.Range(0.5f, 1f);
             }
 
             for (int i = 0; i < sequence.count; i++)
             {
                 EnemyPlane plane = ObjectPool.Instance.GetEnemyPlane(sequence.type);
 
-                if (plane.type == EnemyType.SmallRed || plane.type == EnemyType.SmallGreen)
-                    plane.SetAttribute(SmallEnemyPlaneAttribute);
-                else if (plane.type == EnemyType.MediumBlue || plane.type == EnemyType.MediumGrey)
-                    plane.SetAttribute(MediumEnemyPlaneAttribute);
+                if (plane.type == EnemyType.SmallRed)
+                    plane.SetAttribute(SmallRedEnemyPlaneAttribute);
+                else if(plane.type == EnemyType.SmallGreen)
+                    plane.SetAttribute(SmallGreenEnemyPlaneAttribute);
+                else if (plane.type == EnemyType.MediumBlue)
+                    plane.SetAttribute(MediumBlueEnemyPlaneAttribute);
+                else if (plane.type == EnemyType.MediumGrey)
+                    plane.SetAttribute(MediumGreyEnemyPlaneAttribute);
                 else if (plane.type == EnemyType.Boss)
                     plane.SetAttribute(BossEnemyPlaneAttribute);
 
@@ -82,7 +88,7 @@ public class EnemySpawnManager : MonoBehaviour
 
                 if (plane.type == EnemyType.SmallGreen)
                 {
-                    SmallEnemyPlane smallGreenEnemyPlane = plane as SmallEnemyPlane;
+                    SmallGreenEnemyPlane smallGreenEnemyPlane = plane as SmallGreenEnemyPlane;
                     smallGreenEnemyPlane.SetRotation(randomMultiplier, rotationDelay);
                 }
 

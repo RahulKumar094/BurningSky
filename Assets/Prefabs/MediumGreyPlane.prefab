@@ -173,10 +173,10 @@ GameObject:
   - component: {fileID: 5488905470370941094}
   - component: {fileID: 5488905470370941095}
   - component: {fileID: 2150840650435277658}
-  - component: {fileID: 2906560503566115600}
+  - component: {fileID: 2897358338031339921}
   m_Layer: 0
   m_Name: MediumGreyPlane
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -235,7 +235,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &2906560503566115600
+--- !u!114 &2897358338031339921
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -244,12 +244,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 5488905470370941093}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfa921df07ec5da4a93c0683b86ea660, type: 3}
+  m_Script: {fileID: 11500000, guid: 22ea3d7db5ad536469d0eeb2df7c186a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   type: 4
+  shootDelayAtStart: 0.75
   Weapon_Left: {fileID: 5488905471234733348}
   Weapon_Right: {fileID: 5488905471015987945}
+  vantagePosition: {x: 0, y: -20, z: 10}
+  criticalAtHealth: 200
+  suicideSpeedMultiplier: 5
 --- !u!1 &5488905470411660608
 GameObject:
   m_ObjectHideFlags: 0

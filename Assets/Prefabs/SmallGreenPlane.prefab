@@ -613,4 +613,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  shootDelayAtStart: 0.75
   Weapon: {fileID: 146100814902735809}
+  rotationSpeed: 100
+  yRotationAngle: 90

@@ -86,9 +86,9 @@ public class GameManager : MonoBehaviour
 
     public void PlayerCollideWithBullet(Transform bulletTransform)
     {
-        Bullet bullet = ObjectPool.Bullets.Find(x => x.transform == bulletTransform);
-
         player.health -= 20f;
+
+        Bullet bullet = ObjectPool.Bullets.Find(x => x.transform == bulletTransform);        
         CreateExplosion(bullet.transform.position);
         CheckPlayerAfterCollision();
         bullet.Destroy();
@@ -96,14 +96,10 @@ public class GameManager : MonoBehaviour
 
     public void EnemyCollideWithBullet(Transform bulletTransform, EnemyPlane enemy)
     {
+        if (!enemy.invinsible)
+            enemy.health -= 50f;
+
         Bullet bullet = ObjectPool.Bullets.Find(x => x.transform == bulletTransform);
-
-        if (bullet == null || bullet.transform == null)
-        {
-
-        }
-
-        enemy.health -= 50f;
         CreateExplosion(bullet.transform.position);
         CheckEnemyAfterCollision(enemy);
         bullet.Destroy();
@@ -145,6 +141,7 @@ public class GameManager : MonoBehaviour
 
 public class Tags
 {
+    public const string InvinsibilityWall = "InvinsibilityWall";
     public const string PlayerBulletTag = "PlayerBullet";
     public const string EnemyBulletTag = "EnemyBullet";
     public const string PlayerTag = "Player";

@@ -722,7 +722,7 @@ GameObject:
   - component: {fileID: 753948377815699073}
   m_Layer: 0
   m_Name: MediumBluePlane
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -794,8 +794,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
+  shootDelayAtStart: 0.75
   Weapon_Left: {fileID: 7929782446692112565}
   Weapon_Right: {fileID: 7929782446504658808}
+  vantagePosition: {x: 0, y: -20, z: 10}
+  horizontalMax: 5
 --- !u!1 &7929782448047993041
 GameObject:
   m_ObjectHideFlags: 0

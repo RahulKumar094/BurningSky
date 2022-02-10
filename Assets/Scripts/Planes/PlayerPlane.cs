@@ -21,9 +21,9 @@ public class PlayerPlane : MonoBehaviour, IAttribute
 
     public void SetAttribute(PlaneAttribute attribute)
     {
-        this.health = attribute.health;
-        this.moveSpeed = attribute.moveSpeed;
-        this.fireRate = attribute.fireRate;
+        health = attribute.health;
+        moveSpeed = attribute.moveSpeed;
+        fireRate = attribute.fireRate;
     }
 
     public void SpawnWithCutscene(Action OnCompleteCallback)
