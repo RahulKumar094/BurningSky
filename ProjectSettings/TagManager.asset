@@ -9,6 +9,9 @@ TagManager:
   - PlayerBullet
   - EnemyBullet
   - InvinsibilityWall
+  - Missile
+  - Shield
+  - Coin
   layers:
   - Default
   - TransparentFX

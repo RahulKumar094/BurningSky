@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class PlayerPlane : MonoBehaviour, IAttribute
 {
+    public PlaneAttribute Attribute;
     public Transform Weapon_Left;
+    public Transform Weapon_Center;
     public Transform Weapon_Right;
+
+    public GameObject Shield;
 
     public MinMax XBound = new MinMax(-8.8f, 8.8f);
     public MinMax ZBound = new MinMax(-15.2f, 15.2f);
@@ -18,6 +22,17 @@ public class PlayerPlane : MonoBehaviour, IAttribute
     public float health { get ; set; }
     public float moveSpeed { get ; set ; }
     public float fireRate { get ; set ; }
+    public float GetHealthPercentage { get { return health / maxHealth * 100f; } }
+
+    private float maxHealth;
+
+    public int MissileCount { get { return missileLauncher.Count; } }
+    public float MissileRechargeProgress { get { return missileLauncher.rechargeProgress; } }
+    public int ShieldCount { get { return shield.Count; } }
+    public float ShieldRechargeProgress { get { return shield.rechargeProgress; } }
+
+    private PowerUp missileLauncher;
+    private PowerUp shield;
 
     public void SetAttribute(PlaneAttribute attribute)
     {
@@ -28,9 +43,14 @@ public class PlayerPlane : MonoBehaviour, IAttribute
 
     public void SpawnWithCutscene(Action OnCompleteCallback)
     {
+        SetAttribute(Attribute);
+
         alive = true;
+        maxHealth = health;
         gameObject.SetActive(true);
         transform.position = Vector3.zero;
+        
+        CreatePowerUps();
         StartCoroutine(MoveToStartCoroutine(OnCompleteCallback));
     }
 
@@ -85,6 +105,38 @@ public class PlayerPlane : MonoBehaviour, IAttribute
             EnemyPlane plane = other.GetComponent<EnemyPlane>();
             GameManager.Instance.PlayerCollideWithEnemy(plane, other.ClosestPoint(plane.transform.position));
         }
+        else if (other.CompareTag(Tags.CoinTag))
+        {
+            Coin coin = other.GetComponent<Coin>();
+            GameManager.Instance.PlayerCollectCoin(coin.CoinType);
+            coin.Destroy();
+        }
+    }
+
+    private void CreatePowerUps()
+    {
+        missileLauncher = new PowerUp();
+        missileLauncher.Initialize(3, 2f, 8f);
+
+        shield = new PowerUp();
+        shield.Initialize(1, 10f, 20f, () => { Shield.SetActive(false); });
+    }
+
+    public void ActivateMissile(Action OnActivationCallback)
+    {
+        missileLauncher.Activate(OnActivationCallback);
+    }
+
+    public void ActivateShield()
+    {
+        shield.Activate(() => Shield.SetActive(true));
+    }
+
+    private void Update()
+    {
+        //update powerUps
+        missileLauncher.Update();
+        shield.Update();
     }
 
     public void Destroy()
@@ -95,13 +147,84 @@ public class PlayerPlane : MonoBehaviour, IAttribute
     }
 }
 
+[System.Serializable]
 public struct MinMax
 {
+    [SerializeField]
     public float min;
+    [SerializeField]
     public float max;
     public MinMax(float min, float max)
     {
         this.min = min;
         this.max = max;
+    }
+}
+
+class PowerUp
+{
+    public int maxCount;
+    public float coolDownInSec;
+    public float rechargeTimeInSec;
+    public int Count { get { return count; } }
+
+    public float rechargeProgress { get { return (rechargeTimeInSec - rechargeTimer) / rechargeTimeInSec; } }
+
+    private int count;
+    private bool canActivate;
+    private float coolDownTimer;
+    private float rechargeTimer;
+
+    private Action CooldownCallback;
+
+    public void Initialize(int maxCount, float coolDownInSec, float rechargeTimeInSec, Action OnCooldownComplete = null)
+    {
+        this.maxCount = maxCount;
+        this.coolDownInSec = coolDownInSec;
+        this.rechargeTimeInSec = rechargeTimeInSec;
+
+        count = maxCount;
+        canActivate = true;
+        coolDownTimer = 0f;
+        rechargeTimer = 0f;
+        CooldownCallback = OnCooldownComplete;
+    }
+
+    public void Activate(Action OnActivationCallback)
+    {
+        if (canActivate && count > 0)
+        {
+            count--;
+            canActivate = false;
+            coolDownTimer = coolDownInSec;
+
+            if(rechargeTimer == 0f)
+                rechargeTimer = rechargeTimeInSec;
+
+            OnActivationCallback?.Invoke();
+        }
+    }
+
+    public void Update()
+    {
+        if (!canActivate)
+        {
+            coolDownTimer -= Time.deltaTime;
+            if (coolDownTimer <= 0)
+            {
+                canActivate = true;
+                CooldownCallback?.Invoke();
+            }
+        }
+
+        if (count < maxCount)
+        {
+            rechargeTimer -= Time.deltaTime;
+            if (rechargeTimer <= 0)
+            {
+                count++;
+                rechargeTimer = rechargeTimeInSec;
+            }
+        }
     }
 }

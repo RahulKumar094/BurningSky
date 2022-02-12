@@ -613,6 +613,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  attribute: {fileID: 11400000, guid: b9d005cde76ceba42ae244c03afb6dda, type: 2}
+  coinValue: {fileID: 11400000, guid: 00633b65368a13c44a43387069df24a0, type: 2}
   shootDelayAtStart: 0.75
   Weapon: {fileID: 146100814902735809}
   rotationSpeed: 100

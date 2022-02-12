@@ -5,7 +5,7 @@ public class MediumGreyEnemyPlane : MediumEnemyPlane
     public float criticalAtHealth = 200f;
     public float suicideSpeedMultiplier = 5f;
 
-    public override void Move()
+    protected override void Move()
     {
         switch (currentState)
         {

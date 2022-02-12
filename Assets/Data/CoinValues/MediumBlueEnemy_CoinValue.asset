@@ -9,9 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fcd8ad50e879e93449ec69b3e2cb8fb7, type: 3}
-  m_Name: Player Plane
+  m_Script: {fileID: 11500000, guid: 1d91c300b32fc414db7df940c7d72a11, type: 3}
+  m_Name: MediumBlueEnemy_CoinValue
   m_EditorClassIdentifier: 
-  health: 500
-  moveSpeed: 40
-  fireRate: 2
+  coinValue:
+  - type: 1
+    count: 4
+  - type: 2
+    count: 2
+  - type: 3
+    count: 0

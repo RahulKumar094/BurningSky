@@ -25,26 +25,13 @@ public class MediumEnemyPlane : EnemyPlane
         StartCoroutine("Shoot");
     }
 
-    public override void Update()
+    protected override void ShootAtTarget()
     {
-        if (alive)
-        {
-            Move();
-        }
+        GameManager.Instance.ShootEnemyBullet(Weapon_Left.position, Weapon_Left.forward);
+        GameManager.Instance.ShootEnemyBullet(Weapon_Right.position, Weapon_Right.forward);
     }
 
-    public override IEnumerator Shoot()
-    {
-        yield return new WaitForSeconds(shootDelayAtStart);
-        while (alive)
-        {
-            GameManager.Instance.ShootEnemyBullet(Weapon_Left.position, Weapon_Left.forward);
-            GameManager.Instance.ShootEnemyBullet(Weapon_Right.position, Weapon_Right.forward);
-            yield return new WaitForSeconds(1 / fireRate);
-        }
-    }
-
-    public override void OnTriggerEnter(Collider other)
+    protected override void OnTriggerEnter(Collider other)
     {
         base.OnTriggerEnter(other);
 

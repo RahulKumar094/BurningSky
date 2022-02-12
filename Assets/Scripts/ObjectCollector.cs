@@ -13,5 +13,9 @@ public class ObjectCollector : MonoBehaviour
             EnemyPlane plane = other.GetComponent<EnemyPlane>();
             plane.Destroy();
         }
+        else if (other.CompareTag(Tags.HomingMissile))
+        {
+            other.gameObject.SetActive(false);
+        }
     }
 }

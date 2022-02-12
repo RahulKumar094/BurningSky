@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public enum EnemyType
@@ -15,13 +14,19 @@ public enum EnemyType
 public class EnemyPlane : MonoBehaviour, IAttribute
 {
     public EnemyType type = EnemyType.NONE;
+    public PlaneAttribute attribute;
+    public Enemy_CoinValue coinValue;
     public float shootDelayAtStart = 0.75f;
 
+    public static bool CanShoot { get; set; }
     public bool invinsible { get; protected set; }
     public bool alive { get; set; }
     public float health { get; set; }
     public float moveSpeed { get; set; }
     public float fireRate { get; set; }
+
+    private float shootTimer;
+    private float maxHealth;
 
     public void SetAttribute(PlaneAttribute attribute)
     {
@@ -34,25 +39,47 @@ public class EnemyPlane : MonoBehaviour, IAttribute
     {
         alive = true;
         invinsible = true;
+        maxHealth = health;
         transform.position = spawnPosition;
         transform.rotation = Quaternion.LookRotation(-Vector3.forward);
         gameObject.SetActive(true);
+
+        SetAttribute(attribute);
+        shootTimer = shootDelayAtStart;
     }
 
-    public virtual void Update()
+    protected virtual void Update()
+    {
+        if (alive)
+        {
+            Move();
+            Shoot();
+        }
+    }
+
+    protected virtual void Move()
     {
     }
 
-    public virtual void Move()
+    private void Shoot()
+    {
+        shootTimer -= Time.deltaTime;
+
+        if (shootTimer <= 0)
+        {
+            if (alive && CanShoot)
+            {
+                ShootAtTarget();
+                shootTimer = 1 / fireRate;
+            }
+        }
+    }
+
+    protected virtual void ShootAtTarget()
     {
     }
 
-    public virtual IEnumerator Shoot()
-    {
-        yield return null;
-    }
-
-    public virtual void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(Tags.InvinsibilityWall))
         {
@@ -66,4 +93,18 @@ public class EnemyPlane : MonoBehaviour, IAttribute
         gameObject.SetActive(false);
     }
 
+    public float GetHealthPercent()
+    {
+        return health / maxHealth * 100f;
+    }
+
+    public int GetTotalCoinValue()
+    {
+        int value = 0;
+        foreach (CoinValue coin in coinValue.coinValue)
+        {
+            value += Coin.GetCoinValue(coin.type) * coin.count;
+        }
+        return value;
+    }
 }

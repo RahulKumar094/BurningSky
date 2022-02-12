@@ -794,6 +794,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
+  attribute: {fileID: 11400000, guid: e3195abc090e4e24896fd2b7d2625c5a, type: 2}
+  coinValue: {fileID: 11400000, guid: c278f1330f67fa84095e0a4a857bde54, type: 2}
   shootDelayAtStart: 0.75
   Weapon_Left: {fileID: 7929782446692112565}
   Weapon_Right: {fileID: 7929782446504658808}

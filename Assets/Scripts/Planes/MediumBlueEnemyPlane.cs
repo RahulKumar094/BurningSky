@@ -7,12 +7,13 @@ public class MediumBlueEnemyPlane : MediumEnemyPlane
 
     private float timer = 0f;
 
-    public override void Move()
+    protected override void Move()
     {
         switch (currentState)
         {
             case MediumPlaneState.MoveToVantage:
                 {
+                    timer = 0f;
                     transform.position = Vector3.MoveTowards(transform.position, vantagePosition, moveSpeed * Time.deltaTime);
                     if(transform.position == vantagePosition)
                     {

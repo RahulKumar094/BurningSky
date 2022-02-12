@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawnManager : MonoBehaviour
@@ -6,13 +7,7 @@ public class EnemySpawnManager : MonoBehaviour
     public static EnemySpawnManager Instance { get { return instance; } }
     private static EnemySpawnManager instance;
 
-    public PlaneAttribute SmallRedEnemyPlaneAttribute;
-    public PlaneAttribute SmallGreenEnemyPlaneAttribute;
-    public PlaneAttribute MediumBlueEnemyPlaneAttribute;
-    public PlaneAttribute MediumGreyEnemyPlaneAttribute;
-    public PlaneAttribute BossEnemyPlaneAttribute;
     public Level[] LevelData = new Level[5];
-
     public MinMax XSpawnPositionRange = new MinMax(-8f, 8f);
 
     private static Vector3 spawnPosition = new Vector3(0, -20f, 22f);
@@ -72,18 +67,6 @@ public class EnemySpawnManager : MonoBehaviour
             for (int i = 0; i < sequence.count; i++)
             {
                 EnemyPlane plane = ObjectPool.Instance.GetEnemyPlane(sequence.type);
-
-                if (plane.type == EnemyType.SmallRed)
-                    plane.SetAttribute(SmallRedEnemyPlaneAttribute);
-                else if(plane.type == EnemyType.SmallGreen)
-                    plane.SetAttribute(SmallGreenEnemyPlaneAttribute);
-                else if (plane.type == EnemyType.MediumBlue)
-                    plane.SetAttribute(MediumBlueEnemyPlaneAttribute);
-                else if (plane.type == EnemyType.MediumGrey)
-                    plane.SetAttribute(MediumGreyEnemyPlaneAttribute);
-                else if (plane.type == EnemyType.Boss)
-                    plane.SetAttribute(BossEnemyPlaneAttribute);
-
                 plane.SpawnAt(spawnPosition);
 
                 if (plane.type == EnemyType.SmallGreen)
@@ -98,5 +81,19 @@ public class EnemySpawnManager : MonoBehaviour
             yield return new WaitForSeconds(interval);
             currentSequenceIndex++;
         }
+    }
+
+    public int MaxCoinInLevel(int levelID)
+    {
+        int maxValueInLevel = 0;
+
+        List<EnemyPlane> samples = ObjectPool.EnemySamples;
+        List<SpawnSequence> SpawnSequences = LevelData[levelID].LevelData.SpawnSequences;
+        foreach (SpawnSequence seq in SpawnSequences)
+        {
+            EnemyPlane plane = samples.Find(x => x.type == seq.type);
+            maxValueInLevel += plane.GetTotalCoinValue() * seq.count;
+        }
+        return maxValueInLevel;
     }
 }

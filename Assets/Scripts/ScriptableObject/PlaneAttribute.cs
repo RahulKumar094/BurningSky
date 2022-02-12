@@ -13,6 +13,7 @@ public class PlaneAttribute : ScriptableObject
 
 public interface IAttribute
 {
+    public bool alive { set; get; }
     public float health { set; get; }
     public float moveSpeed { set; get; }
     public float fireRate { set; get; }
