@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd8ad50e879e93449ec69b3e2cb8fb7, type: 3}
   m_Name: Player_PlaneAttribute
   m_EditorClassIdentifier: 
-  health: 5000
+  health: 1500
   moveSpeed: 40
   fireRate: 2

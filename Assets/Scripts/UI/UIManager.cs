@@ -23,8 +23,9 @@ public class UIManager : MonoBehaviour
         gameHUD.Initialize();
     }
 
-    public void EnablePowerUpPanel(bool enable)
+    public void EnableUI(bool enable)
     {
+        gameHUD.EnablePanel(enable);
         powerUpPanel.EnablePanel(enable);
     }
 
@@ -46,14 +47,23 @@ public class UIManager : MonoBehaviour
     public void GameOver()
     {
         EnablePauseScreen(true);
-        pauseMenu.DisableResumeButton();
+        pauseMenu.GameOver();
+    }
+
+    public void LevelComplete()
+    {
+        EnablePauseScreen(true);
+        pauseMenu.LevelComplete();
     }
 
     public void EnablePauseScreen(bool enable)
     {
         pauseMenu.gameObject.SetActive(enable);
         if (enable)
+        {
             GameManager.Instance.GamePaused();
+            pauseMenu.GamePaused();
+        }
         else
             StartCoroutine("ResumeGame");
     }

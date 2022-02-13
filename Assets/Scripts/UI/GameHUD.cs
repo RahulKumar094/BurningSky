@@ -10,6 +10,7 @@ public class GameHUD : MonoBehaviour
     public TMP_Text CoinTxt;
     public TMP_Text ResumeCounterTxt;
     public TMP_Text LevelTxt;
+    public GameObject PauseBtn;
 
     public void Initialize()
     {
@@ -17,6 +18,12 @@ public class GameHUD : MonoBehaviour
         ResumeCounterTxt.gameObject.SetActive(false);
         HealthTxt.text = "100%";
         CoinTxt.text = "0%";
+    }
+
+    public void EnablePanel(bool enable)
+    {
+        PauseBtn.SetActive(enable);
+        HealthSlider.gameObject.SetActive(enable);
     }
 
     public void CoinCollected(float valueInPercent)

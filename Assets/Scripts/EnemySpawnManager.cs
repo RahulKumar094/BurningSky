@@ -7,10 +7,8 @@ public class EnemySpawnManager : MonoBehaviour
     public static EnemySpawnManager Instance { get { return instance; } }
     private static EnemySpawnManager instance;
 
-    public Level[] LevelData = new Level[5];
-    public MinMax XSpawnPositionRange = new MinMax(-8f, 8f);
-
-    private static Vector3 spawnPosition = new Vector3(0, -20f, 22f);
+    public Level[] LevelData = new Level[Game.LevelMax];
+    
     private const float sequenceInterval = 0.25f;
 
     [SerializeField]
@@ -32,20 +30,22 @@ public class EnemySpawnManager : MonoBehaviour
     {
         if (startOver)
         {
-            currentSequenceIndex = -1;
+            currentSequenceIndex = 0;
             currentLevelData = LevelData[Game.Level - 1].LevelData;
             interval = currentLevelData.AverageLevelTimeInSec / currentLevelData.SpawnSequences.Count;
         }
 
-        currentSequenceIndex++;
         routine = UpdateManager();
         StartCoroutine(routine);
     }
 
     public void StopSpawner()
     {
-        StopCoroutine(routine);
-        routine = null;
+        if (routine != null)
+        {
+            StopCoroutine(routine);
+            routine = null;
+        }
     }
 
     private IEnumerator UpdateManager()
@@ -58,8 +58,7 @@ public class EnemySpawnManager : MonoBehaviour
         {
             SpawnSequence sequence = currentLevelData.SpawnSequences[currentSequenceIndex];
 
-            float randomX = Random.Range(XSpawnPositionRange.min, XSpawnPositionRange.max);
-            spawnPosition.x = randomX;
+            float randomX = Random.Range(Game.XAxisSpawnRange.min, Game.XAxisSpawnRange.max);
 
             if (sequence.type == EnemyType.SmallGreen)
             {
@@ -70,7 +69,7 @@ public class EnemySpawnManager : MonoBehaviour
             for (int i = 0; i < sequence.count; i++)
             {
                 EnemyPlane plane = ObjectPool.Instance.GetEnemyPlane(sequence.type);
-                plane.SpawnAt(spawnPosition);
+                plane.SpawnAt(new Vector3(randomX, Game.EnemySpawnPosition.y, Game.EnemySpawnPosition.z));
 
                 if (plane.type == EnemyType.SmallGreen)
                 {

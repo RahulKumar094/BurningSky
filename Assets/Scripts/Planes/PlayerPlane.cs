@@ -8,14 +8,7 @@ public class PlayerPlane : MonoBehaviour, IAttribute
     public Transform Weapon_Left;
     public Transform Weapon_Center;
     public Transform Weapon_Right;
-
     public GameObject Shield;
-
-    public MinMax XBound = new MinMax(-8.8f, 8.8f);
-    public MinMax ZBound = new MinMax(-15.2f, 15.2f);
-
-    private readonly Vector3 startPosition = new Vector3(0, -20, -8);
-    
 
     public bool alive { get; set; }
     public float health { get ; set; }
@@ -61,9 +54,9 @@ public class PlayerPlane : MonoBehaviour, IAttribute
         canMove = false;
         canShoot = false;
 
-        while (transform.position != startPosition)
+        while (transform.position != Game.PlayerSpawnPosition)
         {
-            transform.position = Vector3.MoveTowards(transform.position, startPosition, 10f * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, Game.PlayerSpawnPosition, 10f * Time.deltaTime);
             yield return null;
         }
 
@@ -83,8 +76,8 @@ public class PlayerPlane : MonoBehaviour, IAttribute
             transform.position = Vector3.Lerp(transform.position, transform.position + moveDirection, sensitivity * moveSpeed * Time.deltaTime);
 
             Vector3 finalPosition = transform.position;
-            finalPosition.x = Mathf.Clamp(finalPosition.x, XBound.min, XBound.max);
-            finalPosition.z = Mathf.Clamp(finalPosition.z, ZBound.min, ZBound.max);
+            finalPosition.x = Mathf.Clamp(finalPosition.x, Game.XBound.min, Game.XBound.max);
+            finalPosition.z = Mathf.Clamp(finalPosition.z, Game.ZBound.min, Game.ZBound.max);
             transform.position = finalPosition;
         }
     }

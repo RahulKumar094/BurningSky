@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public GameObject PlayerPlanePrefab;
     public Transform PlayerTransform { get { return player.transform; }}
 
+    private int[] levelHighscore = new int[Game.LevelMax];
     private PlayerPlane player;
     private int collectedCoins;
     private int maxCoinsInLevel;
@@ -42,7 +43,7 @@ public class GameManager : MonoBehaviour
         player = go.GetComponent<PlayerPlane>();
         player.SpawnWithCutscene(() => 
         {
-            UIManager.Instance.EnablePowerUpPanel(true);
+            UIManager.Instance.EnableUI(true);
             EnemySpawnManager.Instance.StartSpawner(true);
             InputDesire.Instance.EnableInput(true);
             EnemyPlane.CanShoot = true;
@@ -53,7 +54,7 @@ public class GameManager : MonoBehaviour
         InputDesire.Instance.PointerDragEvent += player.Move;
 
         UIManager.Instance.Initialize();
-        UIManager.Instance.EnablePowerUpPanel(false);
+        UIManager.Instance.EnableUI(false);
         UIManager.Instance.SetHealth(player.GetHealthPercentage);
     }
 
@@ -134,14 +135,14 @@ public class GameManager : MonoBehaviour
         if (target.CompareTag(Tags.EnemyTag))
         {
             EnemyPlane enemy = target.GetComponent<EnemyPlane>();
-            enemy.health -= 200f;
+            enemy.health -= DamageData.FromPlayerMissile;
             CheckEnemyAfterCollision(enemy);
         }
         else if (target.CompareTag(Tags.PlayerTag))
         {
             if (!player.ShieldActive)
             {
-                player.health -= 200;
+                player.health -= DamageData.FromEnemyMissile;
                 CheckPlayerAfterCollision();
                 UIManager.Instance.SetHealth(player.GetHealthPercentage);
             }
@@ -151,12 +152,12 @@ public class GameManager : MonoBehaviour
 
     public void PlayerCollideWithEnemy(EnemyPlane enemy, Vector3 collisionPoint)
     {
-        enemy.health -= 100f;
+        enemy.health -= DamageData.FromPlayerPlane;
         CheckEnemyAfterCollision(enemy);
 
         if (!player.ShieldActive)
         {
-            player.health -= 40f;
+            player.health -= DamageData.FromEnemyPlane;
             CheckPlayerAfterCollision();
             UIManager.Instance.SetHealth(player.GetHealthPercentage);
         }
@@ -168,7 +169,7 @@ public class GameManager : MonoBehaviour
     {
         if (!player.ShieldActive)
         {
-            player.health -= 20f;
+            player.health -= DamageData.FromEnemyBullet;
             CheckPlayerAfterCollision();
             UIManager.Instance.SetHealth(player.GetHealthPercentage);
         }
@@ -181,7 +182,7 @@ public class GameManager : MonoBehaviour
     public void EnemyCollideWithBullet(Transform bulletTransform, EnemyPlane enemy)
     {
         if (!enemy.invinsible)
-            enemy.health -= 50f;
+            enemy.health -= DamageData.FromPlayerBullet;
 
         Bullet bullet = ObjectPool.Bullets.Find(x => x.transform == bulletTransform);
         CreateExplosion(bullet.transform.position);
@@ -196,7 +197,7 @@ public class GameManager : MonoBehaviour
             player.Destroy();
             EnemySpawnManager.Instance.StopSpawner();
             InputDesire.Instance.EnableInput(false);
-            UIManager.Instance.EnablePowerUpPanel(false);
+            UIManager.Instance.EnableUI(false);
             Invoke("ShowGameoverScreen", 3f);
         }
     }
@@ -220,7 +221,10 @@ public class GameManager : MonoBehaviour
             if (enemy is BossEnemyPlane)
             {
                 EnemySpawnManager.Instance.StopSpawner();
-                ChangeLevel();
+                UIManager.Instance.EnableUI(false);
+                SaveLevelData();
+                //Invoke("LoadNextLevel", 5f);
+                Invoke("ShowLevelCompleteScreen", 5f);
             }
         }
     }
@@ -244,7 +248,7 @@ public class GameManager : MonoBehaviour
         {
             UIManager.Instance.SetHealth(player.GetHealthPercentage);
             UIManager.Instance.SetCoinText(0f);
-            UIManager.Instance.EnablePowerUpPanel(true);
+            UIManager.Instance.EnableUI(true);
 
             EnemySpawnManager.Instance.StartSpawner(true);
             InputDesire.Instance.EnableInput(true);
@@ -253,13 +257,13 @@ public class GameManager : MonoBehaviour
         EnemyPlane.CanShoot = false;
     }
 
-    private void ChangeLevel()
+    private void SaveLevelData()
     {
-        Game.LevelHighscore[Game.Level - 1] = collectedCoins * Game.CoinToScoreMultiplier;
+        levelHighscore[Game.Level - 1] = collectedCoins * Game.CoinToScoreMultiplier;
         int currentHighscore = 0;
         for (int i = 0; i < Game.Level; i++)
         {
-            currentHighscore += Game.LevelHighscore[i];
+            currentHighscore += levelHighscore[i];
         }
 
         int hs = PlayerPrefs.GetInt(Game.Highscore_Key);
@@ -267,14 +271,11 @@ public class GameManager : MonoBehaviour
         {
             PlayerPrefs.SetInt(Game.Highscore_Key, currentHighscore);
         }
+    }
 
-        if (Game.Level < Game.LevelMax)
-        {
-            Game.Level++;
-            Invoke("LoadGameLevel", 5f);
-        }
-        else
-            Invoke("ShowGameoverScreen", 3f);
+    private void ShowLevelCompleteScreen()
+    {
+        UIManager.Instance.LevelComplete();
     }
 
     private void ShowGameoverScreen()
@@ -282,26 +283,25 @@ public class GameManager : MonoBehaviour
         UIManager.Instance.GameOver();
     }
 
-    private void LoadGameLevel()
+    public void LoadNextLevel()
     {
-        SceneLoader.LoadGameLevel();
-        ResetLevel();
-
-        maxCoinsInLevel = EnemySpawnManager.Instance.MaxCoinInLevel(Game.Level - 1);
+        Game.Level++;
+        if (Game.Level <= Game.LevelMax)
+        {
+            maxCoinsInLevel = EnemySpawnManager.Instance.MaxCoinInLevel(Game.Level - 1);
+            SceneLoader.LoadGameLevel();
+            ResetLevel();
+        }
+        else
+            ShowGameoverScreen();
     }
 
-    public void RestartLevel()
+    public void ResetLevel()
     {
         Paused = false;
-        ResetLevel();
-    }
-
-    private void ResetLevel()
-    {
         DestroyAliveObjects();
-        ResetPlayer();
-
         collectedCoins = 0;
+        ResetPlayer();
         UIManager.Instance.Initialize();
     }
 
