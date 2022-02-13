@@ -4064,10 +4064,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3f545cfba0efc146a2ea2e7acc88bdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MissileCount: 5
-  PlayerBulletCount: 20
-  EnemyBulletCount: 20
-  CoinCount: 40
+  MissileCount: 8
+  PlayerBulletCount: 30
+  EnemyBulletCount: 50
+  CoinCount: 80
   HomingMissilePrefab: {fileID: 4597285984075222683, guid: 024ef83fdf375ad4b9dabab91d2a7ab8, type: 3}
   PlayerBulletPrefab: {fileID: 8143360978065471276, guid: 56a6a989d9627af4c809e453d78b3f0b, type: 3}
   EnemyBulletPrefab: {fileID: 8235848312352562282, guid: 8ee01efec11e0144c9c5402877860603, type: 3}

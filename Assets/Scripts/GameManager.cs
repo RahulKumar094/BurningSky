@@ -293,7 +293,10 @@ public class GameManager : MonoBehaviour
             ResetLevel();
         }
         else
+        {
+            Game.Level = Game.LevelMax;
             ShowGameoverScreen();
+        }
     }
 
     public void ResetLevel()
@@ -315,6 +318,11 @@ public class GameManager : MonoBehaviour
         foreach (Coin coin in ObjectPool.Coins)
         {
             if (coin.gameObject.activeSelf) coin.Destroy();
+        }
+
+        foreach (Bullet bullet in ObjectPool.Bullets)
+        {
+            if (bullet.alive) bullet.Destroy();
         }
     }
 }

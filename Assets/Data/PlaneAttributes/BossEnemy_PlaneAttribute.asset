@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd8ad50e879e93449ec69b3e2cb8fb7, type: 3}
   m_Name: BossEnemy_PlaneAttribute
   m_EditorClassIdentifier: 
-  health: 3000
+  health: 4000
   moveSpeed: 2
   fireRate: 2
