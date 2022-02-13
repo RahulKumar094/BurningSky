@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7165168465dbfa748be6ccf80b19b3a9, type: 3}
-  m_Name: Level 1
+  m_Name: Level 4
   m_EditorClassIdentifier: 
   LevelData:
     AverageLevelTimeInSec: 10
     SpawnSequences:
-    - type: 1
+    - type: 3
       count: 1
     - type: 2
-      count: 5
-    - type: 5
-      count: 1
+      count: 2
+    - type: 1
+      count: 8

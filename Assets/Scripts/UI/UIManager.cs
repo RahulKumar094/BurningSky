@@ -1,9 +1,11 @@
+using System.Collections;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
     public GameHUD gameHUD;
     public PowerUpPanel powerUpPanel;
+    public PauseMenu pauseMenu;
 
     public static UIManager Instance { get { return instance; } }
     private static UIManager instance;
@@ -39,5 +41,26 @@ public class UIManager : MonoBehaviour
     public void SetCoinText(float valueInPercent)
     {
         gameHUD.CoinCollected(valueInPercent);
+    }
+
+    public void GameOver()
+    {
+        EnablePauseScreen(true);
+        pauseMenu.DisableResumeButton();
+    }
+
+    public void EnablePauseScreen(bool enable)
+    {
+        pauseMenu.gameObject.SetActive(enable);
+        if (enable)
+            GameManager.Instance.GamePaused();
+        else
+            StartCoroutine("ResumeGame");
+    }
+
+    private IEnumerator ResumeGame()
+    {
+        yield return StartCoroutine(gameHUD.ResumeGame());
+        GameManager.Instance.ResumeGame();
     }
 }

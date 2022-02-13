@@ -13,13 +13,13 @@ public class ScrollableBackground : MonoBehaviour
         float bgHeight = transform.GetChild(0).localScale.y;
 
         zInterval = bgCount * bgHeight;
-        OnLevelChange();
+        SetLevelTexture();
     }
 
     void Update()
     {
-        //scroll bg
-        transform.position -= transform.forward * Speed * Time.deltaTime;
+        if(!GameManager.Paused)
+            transform.position -= transform.forward * Speed * Time.deltaTime;
     }
 
     public void SetNextPosition(Transform transform)
@@ -32,13 +32,13 @@ public class ScrollableBackground : MonoBehaviour
         transform.localScale = new Vector3(oldScale.x, -oldScale.y, oldScale.z);
     }
 
-    public void OnLevelChange()
+    private void SetLevelTexture()
     {
         transform.position = Vector3.zero;
 
         MeshRenderer[] renderers = transform.GetComponentsInChildren<MeshRenderer>();
         Material material = new Material(renderers[0].sharedMaterial);
-        material.mainTexture = BGTextures[GameManager.Instance.Level];
+        material.mainTexture = BGTextures[Game.Level - 1];
         foreach (MeshRenderer renderer in renderers)
         {
             renderer.sharedMaterial = material;

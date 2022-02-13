@@ -15,22 +15,24 @@ public class PlayerPlane : MonoBehaviour, IAttribute
     public MinMax ZBound = new MinMax(-15.2f, 15.2f);
 
     private readonly Vector3 startPosition = new Vector3(0, -20, -8);
-
-    private bool canMove;
+    
 
     public bool alive { get; set; }
     public float health { get ; set; }
     public float moveSpeed { get ; set ; }
     public float fireRate { get ; set ; }
+
+    public bool ShieldActive { get { return Shield.activeSelf; } }
     public float GetHealthPercentage { get { return health / maxHealth * 100f; } }
-
-    private float maxHealth;
-
     public int MissileCount { get { return missileLauncher.Count; } }
     public float MissileRechargeProgress { get { return missileLauncher.rechargeProgress; } }
     public int ShieldCount { get { return shield.Count; } }
     public float ShieldRechargeProgress { get { return shield.rechargeProgress; } }
 
+    private bool canMove;
+    private bool canShoot;    
+    private float maxHealth;    
+    private float shootTimer;
     private PowerUp missileLauncher;
     private PowerUp shield;
 
@@ -44,8 +46,8 @@ public class PlayerPlane : MonoBehaviour, IAttribute
     public void SpawnWithCutscene(Action OnCompleteCallback)
     {
         SetAttribute(Attribute);
+        Shield.SetActive(false);
 
-        alive = true;
         maxHealth = health;
         gameObject.SetActive(true);
         transform.position = Vector3.zero;
@@ -57,25 +59,28 @@ public class PlayerPlane : MonoBehaviour, IAttribute
     private IEnumerator MoveToStartCoroutine(Action OnCompleteCallback)
     {
         canMove = false;
+        canShoot = false;
 
         while (transform.position != startPosition)
         {
-            transform.position = Vector3.MoveTowards(transform.position, startPosition, 15f * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, startPosition, 10f * Time.deltaTime);
             yield return null;
         }
 
+        alive = true;
         canMove = true;
-        OnCompleteCallback?.Invoke();
+        canShoot = true;
+        shootTimer = 1 / fireRate;
 
-        StartCoroutine("Shoot");
+        OnCompleteCallback?.Invoke();
     }
 
-    public void Move(Vector2 direction)
+    public void Move(Vector2 direction, float sensitivity)
     {
         if (canMove)
         {
             Vector3 moveDirection = new Vector3(direction.x, 0, direction.y);
-            transform.position = Vector3.Lerp(transform.position, transform.position + moveDirection, moveSpeed * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, transform.position + moveDirection, sensitivity * moveSpeed * Time.deltaTime);
 
             Vector3 finalPosition = transform.position;
             finalPosition.x = Mathf.Clamp(finalPosition.x, XBound.min, XBound.max);
@@ -84,14 +89,27 @@ public class PlayerPlane : MonoBehaviour, IAttribute
         }
     }
 
-    public IEnumerator Shoot()
+    private void Shoot()
     {
-        while (health > 0)
+        shootTimer -= Time.deltaTime;
+
+        if (shootTimer <= 0)
         {
             GameManager.Instance.ShootPlayerBullet(Weapon_Left.position, Weapon_Left.forward);
             GameManager.Instance.ShootPlayerBullet(Weapon_Right.position, Weapon_Right.forward);
-            yield return new WaitForSeconds(1 / fireRate);
+            shootTimer = 1 / fireRate;
         }
+    }
+
+    private void Update()
+    {
+        if (GameManager.Paused) return;
+
+        if (alive && canShoot) Shoot();
+
+        //update powerUps
+        missileLauncher.Update();
+        shield.Update();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -132,13 +150,6 @@ public class PlayerPlane : MonoBehaviour, IAttribute
         shield.Activate(() => Shield.SetActive(true));
     }
 
-    private void Update()
-    {
-        //update powerUps
-        missileLauncher.Update();
-        shield.Update();
-    }
-
     public void Destroy()
     {
         alive = false;
@@ -168,7 +179,14 @@ class PowerUp
     public float rechargeTimeInSec;
     public int Count { get { return count; } }
 
-    public float rechargeProgress { get { return (rechargeTimeInSec - rechargeTimer) / rechargeTimeInSec; } }
+    public float rechargeProgress 
+    { 
+        get
+        {
+            if (count == maxCount) return 1;
+            return (rechargeTimeInSec - rechargeTimer) / rechargeTimeInSec;
+        }
+    }
 
     private int count;
     private bool canActivate;

@@ -18,7 +18,7 @@ public class EnemyPlane : MonoBehaviour, IAttribute
     public Enemy_CoinValue coinValue;
     public float shootDelayAtStart = 0.75f;
 
-    public static bool CanShoot { get; set; }
+    public static bool CanShoot;
     public bool invinsible { get; protected set; }
     public bool alive { get; set; }
     public float health { get; set; }
@@ -50,10 +50,14 @@ public class EnemyPlane : MonoBehaviour, IAttribute
 
     protected virtual void Update()
     {
+        if (GameManager.Paused) return;
+
         if (alive)
         {
             Move();
-            Shoot();
+
+            if(CanShoot)
+                Shoot();
         }
     }
 
@@ -67,11 +71,8 @@ public class EnemyPlane : MonoBehaviour, IAttribute
 
         if (shootTimer <= 0)
         {
-            if (alive && CanShoot)
-            {
-                ShootAtTarget();
-                shootTimer = 1 / fireRate;
-            }
+            ShootAtTarget();
+            shootTimer = 1 / fireRate;
         }
     }
 

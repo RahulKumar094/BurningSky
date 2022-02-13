@@ -12,7 +12,13 @@ public class EnemySpawnManager : MonoBehaviour
 
     private static Vector3 spawnPosition = new Vector3(0, -20f, 22f);
     private const float sequenceInterval = 0.25f;
-    private bool isPaused;
+
+    [SerializeField]
+    private int currentSequenceIndex = -1;
+    private LevelData currentLevelData;
+    private float interval;
+
+    private IEnumerator routine;
 
     void Awake()
     {
@@ -22,27 +28,24 @@ public class EnemySpawnManager : MonoBehaviour
             Destroy(gameObject);
     }
 
-    [SerializeField]
-    private int currentSequenceIndex;
-    private LevelData currentLevelData;
-    private float interval;
-    public void StartSpawner(bool startOver = true)
+    public void StartSpawner(bool startOver = false)
     {
-        isPaused = false;
-
         if (startOver)
         {
-            currentSequenceIndex = 0;
-            currentLevelData = LevelData[GameManager.Instance.Level - 1].LevelData;
+            currentSequenceIndex = -1;
+            currentLevelData = LevelData[Game.Level - 1].LevelData;
             interval = currentLevelData.AverageLevelTimeInSec / currentLevelData.SpawnSequences.Count;
         }
 
-        StartCoroutine("UpdateManager");
+        currentSequenceIndex++;
+        routine = UpdateManager();
+        StartCoroutine(routine);
     }
 
     public void StopSpawner()
     {
-        isPaused = true;
+        StopCoroutine(routine);
+        routine = null;
     }
 
     private IEnumerator UpdateManager()
@@ -51,7 +54,7 @@ public class EnemySpawnManager : MonoBehaviour
         float randomMultiplier = 0f;
         float rotationDelay = 0f;
 
-        while (!isPaused && currentSequenceIndex < currentLevelData.SpawnSequences.Count)
+        while (currentSequenceIndex < currentLevelData.SpawnSequences.Count)
         {
             SpawnSequence sequence = currentLevelData.SpawnSequences[currentSequenceIndex];
 
@@ -74,12 +77,10 @@ public class EnemySpawnManager : MonoBehaviour
                     SmallGreenEnemyPlane smallGreenEnemyPlane = plane as SmallGreenEnemyPlane;
                     smallGreenEnemyPlane.SetRotation(randomMultiplier, rotationDelay);
                 }
-
                 yield return new WaitForSeconds(sequenceInterval);
             }
-
-            yield return new WaitForSeconds(interval);
             currentSequenceIndex++;
+            yield return new WaitForSeconds(interval);
         }
     }
 

@@ -1,23 +1,18 @@
 
 public class Game
 {
-    //must be set before loading scene is loaded
-    public static string NextSceneToLoad;
-}
+    public const int CoinToScoreMultiplier = 50;
+    public const string Highscore_Key = "High_Score_Key";
+    public const string Sensitivity_Key = "Setting_Sensitivity_Key";
 
-public class SceneNames
-{
-    public const string Loading = "Loading";
-    public const string MainMenu = "MainMenu";
-    public const string Level_1 = "Level_1";
-    public const string Level_2 = "Level_2";
-    public const string Level_3 = "Level_3";
-    public const string Level_4 = "Level_4";
-    public const string Level_5 = "Level_5";
+    public static int Level = 1;
+    public const int LevelMax = 5;
+    public static int[] LevelHighscore = new int[LevelMax];
 }
 
 public class Tags
 {
+    public const string ScrollableBackgroundTag = "ScrollableBG";
     public const string InvinsibilityWall = "InvinsibilityWall";
     public const string PlayerBulletTag = "PlayerBullet";
     public const string EnemyBulletTag = "EnemyBullet";

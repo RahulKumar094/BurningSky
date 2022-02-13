@@ -7,15 +7,17 @@ public class LoadingScreen : MonoBehaviour
     public float RotateSpeed = 20f;
 
     private float timer;
-    void Start()
-    {
-        timer = 0f;
+    //void Start()
+    //{
+    //    timer = 0f;
+    //    AsyncOperation handle = SceneManager.LoadSceneAsync(SceneNames.Level);
+    //    handle.completed += LevelLoaded;
+    //}
 
-        if (!string.IsNullOrEmpty(Game.NextSceneToLoad))
-            SceneManager.LoadSceneAsync(Game.NextSceneToLoad);
-        else
-            throw new System.Exception("next level to load is not set");
-    }
+    //void LevelLoaded(AsyncOperation handle)
+    //{
+    //    SceneManager.LoadSceneAsync(SceneLoader.NextSceneToLoad, LoadSceneMode.Additive);
+    //}
 
     // Update is called once per frame
     void Update()

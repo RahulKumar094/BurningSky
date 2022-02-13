@@ -6,12 +6,14 @@ public class InputDesire : MonoBehaviour
     public static InputDesire Instance { get { return instance; } }
     private static InputDesire instance;
 
-    public Action<Vector2> PointerDragEvent;
+    public Action<Vector2, float> PointerDragEvent;
 
     private Vector3 dragBeginPosition;
     private Vector3 targetDirection;
     private bool inputEnabled;
     private bool isHeld;
+
+    private float sensitivity;
 
     void Awake()
     {
@@ -19,6 +21,8 @@ public class InputDesire : MonoBehaviour
             instance = this;
         else
             Destroy(gameObject);
+
+        sensitivity = PlayerPrefs.GetFloat(Game.Sensitivity_Key, 0.5f) * 2f;
     }
 
     void Update()
@@ -41,7 +45,7 @@ public class InputDesire : MonoBehaviour
             targetDirection = Input.mousePosition - dragBeginPosition;
             if (targetDirection.magnitude != 0)
             {
-                PointerDragEvent?.Invoke(targetDirection.normalized);
+                PointerDragEvent?.Invoke(targetDirection.normalized, sensitivity);
             }
             dragBeginPosition = Input.mousePosition;
         }

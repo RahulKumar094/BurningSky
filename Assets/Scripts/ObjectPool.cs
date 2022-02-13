@@ -23,6 +23,7 @@ public class ObjectPool : MonoBehaviour
 
     public static List<EnemyPlane> EnemyPlanes { get { return enemyPlanes; } }
     public static List<Bullet> Bullets { get { return bullets; } }
+    public static List<Coin> Coins { get { return coins; } }
 
     private static List<HomingMissile> homingMissiles = new List<HomingMissile>();
     private static List<EnemyPlane> enemyPlanes = new List<EnemyPlane>();
@@ -147,6 +148,15 @@ public class ObjectPool : MonoBehaviour
             planes.Add(info.Prefab.GetComponent<EnemyPlane>());
         }
         return planes;
+    }
+
+    private void OnDestroy()
+    {
+        homingMissiles.Clear();
+        enemyPlanes.Clear();
+        bullets.Clear();
+        coins.Clear();
+        enemySamples.Clear();
     }
 
 }

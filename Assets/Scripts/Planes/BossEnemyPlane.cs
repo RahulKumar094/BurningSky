@@ -66,7 +66,7 @@ public class BossEnemyPlane : EnemyPlane
                     timer += Time.deltaTime;
                     if (timer >= switchPositionAfterSecs)
                     {
-                        if(CanShoot) GameManager.Instance.EnemyLaunchMissile(Weapon_Center);
+                        GameManager.Instance.EnemyLaunchMissile(Weapon_Center);
 
                         vantagePosition = new Vector3(Random.Range(XBound.min, XBound.max), -20f, Random.Range(YBound.min, YBound.max));
                         currentState = BossPlaneState.MoveToVantage;
