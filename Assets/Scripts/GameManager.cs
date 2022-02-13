@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
         player = go.GetComponent<PlayerPlane>();
         player.SpawnWithCutscene(() => 
         {
-            UIManager.Instance.EnableUI(true);
+            UIManager.Instance.EnableHUD(true);
             EnemySpawnManager.Instance.StartSpawner(true);
             InputDesire.Instance.EnableInput(true);
             EnemyPlane.CanShoot = true;
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
         InputDesire.Instance.PointerDragEvent += player.Move;
 
         UIManager.Instance.Initialize();
-        UIManager.Instance.EnableUI(false);
+        UIManager.Instance.EnableHUD(false);
         UIManager.Instance.SetHealth(player.GetHealthPercentage);
     }
 
@@ -197,7 +197,7 @@ public class GameManager : MonoBehaviour
             player.Destroy();
             EnemySpawnManager.Instance.StopSpawner();
             InputDesire.Instance.EnableInput(false);
-            UIManager.Instance.EnableUI(false);
+            UIManager.Instance.EnableHUD(false);
             Invoke("ShowGameoverScreen", 3f);
         }
     }
@@ -221,7 +221,7 @@ public class GameManager : MonoBehaviour
             if (enemy is BossEnemyPlane)
             {
                 EnemySpawnManager.Instance.StopSpawner();
-                UIManager.Instance.EnableUI(false);
+                UIManager.Instance.EnableHUD(false);
                 SaveLevelData();
                 //Invoke("LoadNextLevel", 5f);
                 Invoke("ShowLevelCompleteScreen", 5f);
@@ -248,7 +248,7 @@ public class GameManager : MonoBehaviour
         {
             UIManager.Instance.SetHealth(player.GetHealthPercentage);
             UIManager.Instance.SetCoinText(0f);
-            UIManager.Instance.EnableUI(true);
+            UIManager.Instance.EnableHUD(true);
 
             EnemySpawnManager.Instance.StartSpawner(true);
             InputDesire.Instance.EnableInput(true);
@@ -275,7 +275,7 @@ public class GameManager : MonoBehaviour
 
     private void ShowLevelCompleteScreen()
     {
-        UIManager.Instance.LevelComplete();
+        if(player.alive) UIManager.Instance.LevelComplete(levelHighscore[Game.Level - 1]);
     }
 
     private void ShowGameoverScreen()
@@ -289,7 +289,7 @@ public class GameManager : MonoBehaviour
         if (Game.Level <= Game.LevelMax)
         {
             maxCoinsInLevel = EnemySpawnManager.Instance.MaxCoinInLevel(Game.Level - 1);
-            SceneLoader.LoadGameLevel();
+            SceneLoader.LoadGameLevelScene();
             ResetLevel();
         }
         else

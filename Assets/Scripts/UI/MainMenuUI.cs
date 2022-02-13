@@ -32,13 +32,12 @@ public class MainMenuUI : MonoBehaviour
 
     public void OnClick_Play()
     {
-        Game.Level = 1;
-        SceneLoader.LoadGameLevel();
+        SceneLoader.LoadGameScene();
     }
 
     public void OnClick_Settings()
     {
-        Sensitivity.value = PlayerPrefs.GetFloat(Game.Sensitivity_Key, 0.5f);
+        Sensitivity.value = PlayerPrefs.GetFloat(Game.Sensitivity_Key, 1f);
         ButtonPanel.SetActive(false);
         SettingsPanel.SetActive(true);
     }

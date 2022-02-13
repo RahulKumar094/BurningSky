@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Level 2
   m_EditorClassIdentifier: 
   LevelData:
-    AverageLevelTimeInSec: 20
+    AverageLevelTimeInSec: 35
     SpawnSequences:
     - type: 1
       count: 5

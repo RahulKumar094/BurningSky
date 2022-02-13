@@ -1,9 +1,12 @@
+using TMPro;
 using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
     public GameObject ResumeBtn;
     public GameObject NextLevelBtn;
+    public GameObject ScorePanel;
+    public TMP_Text ScoreTxt;
 
     public void OnClick_Resume()
     {
@@ -31,17 +34,22 @@ public class PauseMenu : MonoBehaviour
     {
         ResumeBtn.SetActive(true);
         NextLevelBtn.SetActive(false);
+        ScorePanel.SetActive(false);
     }
 
-    public void LevelComplete()
+    public void LevelComplete(int levelScore)
     {
         ResumeBtn.SetActive(false);
         NextLevelBtn.SetActive(true);
+
+        ScorePanel.SetActive(true);
+        ScoreTxt.text = "Score: " + levelScore;
     }
 
     public void GameOver()
     {
         ResumeBtn.SetActive(false);
         NextLevelBtn.SetActive(false);
+        ScorePanel.SetActive(false);
     }
 }

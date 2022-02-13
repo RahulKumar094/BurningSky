@@ -2,17 +2,22 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader
 {
-    public static void LoadGameLevel()
+    public static void LoadGameLevelScene()
     {
-        if (string.Compare(SceneManager.GetActiveScene().name, SceneNames.MainMenu) == 0)
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+        SceneManager.LoadSceneAsync(Game.Level, LoadSceneMode.Additive).completed += (handle) => 
         {
-            SceneManager.LoadSceneAsync(0);
-        }
-        else if(Game.Level > 1)
+            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(Game.Level));
+        };
+    }
+
+    public static void LoadGameScene()
+    {
+        SceneManager.LoadSceneAsync(SceneNames.MainLevelScene);
+        SceneManager.LoadSceneAsync(Game.Level, LoadSceneMode.Additive).completed += (handle) =>
         {
-            SceneManager.UnloadSceneAsync(Game.Level - 1);
-        }
-        SceneManager.LoadSceneAsync(Game.Level, LoadSceneMode.Additive);
+            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(Game.Level));
+        };
     }
 
     public static void LoadMainMenuScene()
@@ -23,9 +28,6 @@ public class SceneLoader
 
 public class SceneNames
 {
-    public const string Loading = "Loading";
+    public const string MainLevelScene = "Level_Main";
     public const string MainMenu = "MainMenu";
-    public const string Level_0 = "Level_0";
-    public const string Level_1 = "Level_1";
-    public const string Level_2 = "Level_2";
 }

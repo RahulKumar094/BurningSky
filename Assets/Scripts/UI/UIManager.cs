@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
         gameHUD.Initialize();
     }
 
-    public void EnableUI(bool enable)
+    public void EnableHUD(bool enable)
     {
         gameHUD.EnablePanel(enable);
         powerUpPanel.EnablePanel(enable);
@@ -50,10 +50,10 @@ public class UIManager : MonoBehaviour
         pauseMenu.GameOver();
     }
 
-    public void LevelComplete()
+    public void LevelComplete(int levelScore)
     {
         EnablePauseScreen(true);
-        pauseMenu.LevelComplete();
+        pauseMenu.LevelComplete(levelScore);
     }
 
     public void EnablePauseScreen(bool enable)

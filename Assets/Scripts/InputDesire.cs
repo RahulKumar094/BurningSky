@@ -22,7 +22,7 @@ public class InputDesire : MonoBehaviour
         else
             Destroy(gameObject);
 
-        sensitivity = PlayerPrefs.GetFloat(Game.Sensitivity_Key, 0.5f) * 2f;
+        sensitivity = PlayerPrefs.GetFloat(Game.Sensitivity_Key, 1f);
     }
 
     void Update()
