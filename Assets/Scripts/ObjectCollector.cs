@@ -6,7 +6,8 @@ public class ObjectCollector : MonoBehaviour
     {
         if (other.CompareTag(Tags.PlayerBulletTag) || other.CompareTag(Tags.EnemyBulletTag))
         {
-            ObjectPool.Instance.DestroyBullet(other.transform);
+            Bullet bullet = other.GetComponent<Bullet>();
+            bullet.Destroy();
         }
         else if (other.CompareTag(Tags.EnemyTag))
         {

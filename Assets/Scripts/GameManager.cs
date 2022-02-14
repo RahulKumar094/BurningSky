@@ -64,13 +64,6 @@ public class GameManager : MonoBehaviour
 
         if (player.alive)
             UIManager.Instance.UpdatePowerUp(player.MissileRechargeProgress, player.MissileCount, player.ShieldRechargeProgress, player.ShieldCount);
-
-        //update alive bullets
-        foreach (Bullet bullet in ObjectPool.Bullets)
-        {
-            if(bullet.alive)
-                bullet.Update();
-        }
     }
 
     public void GamePaused()
@@ -116,13 +109,13 @@ public class GameManager : MonoBehaviour
 
     public void ShootPlayerBullet(Vector3 startPosition, Vector3 direction)
     {
-        Bullet bullet = ObjectPool.Instance.GetBullet<PlayerBullet>();
+        Bullet bullet = ObjectPool.Instance.GetPlayerBullet();
         bullet.Shoot(startPosition, direction);
     }
 
     public void ShootEnemyBullet(Vector3 startPosition, Vector3 direction)
     {
-        Bullet bullet = ObjectPool.Instance.GetBullet<EnemyBullet>();
+        Bullet bullet = ObjectPool.Instance.GetEnemyBullet();
         bullet.Shoot(startPosition, direction);
     }
 
@@ -165,17 +158,15 @@ public class GameManager : MonoBehaviour
         CreateExplosion(collisionPoint);
     }
 
-    public void PlayerCollideWithBullet(Transform bulletTransform)
+    public void PlayerCollideWithBullet(Bullet bullet)
     {
         if (!player.ShieldActive)
         {
             player.health -= DamageData.FromEnemyBullet;
             CheckPlayerAfterCollision();
             UIManager.Instance.SetHealth(player.GetHealthPercentage);
-        }
-
-        Bullet bullet = ObjectPool.Bullets.Find(x => x.transform == bulletTransform);        
-        CreateExplosion(bullet.transform.position);        
+        }      
+        CreateExplosion(bullet.transform.position);
         bullet.Destroy();
     }
 
@@ -184,7 +175,7 @@ public class GameManager : MonoBehaviour
         if (!enemy.invinsible)
             enemy.health -= DamageData.FromPlayerBullet;
 
-        Bullet bullet = ObjectPool.Bullets.Find(x => x.transform == bulletTransform);
+        Bullet bullet = bulletTransform.GetComponent<Bullet>();
         CreateExplosion(bullet.transform.position);
         CheckEnemyAfterCollision(enemy);
         bullet.Destroy();
@@ -301,28 +292,11 @@ public class GameManager : MonoBehaviour
 
     public void ResetLevel()
     {
+        ObjectPool.Instance.DestroyAliveObjectFromPool();
+
         Paused = false;
-        DestroyAliveObjects();
         collectedCoins = 0;
         ResetPlayer();
         UIManager.Instance.Initialize();
-    }
-
-    private void DestroyAliveObjects()
-    {
-        foreach (EnemyPlane plane in ObjectPool.EnemyPlanes)
-        {
-            if (plane.alive) plane.Destroy();
-        }
-
-        foreach (Coin coin in ObjectPool.Coins)
-        {
-            if (coin.gameObject.activeSelf) coin.Destroy();
-        }
-
-        foreach (Bullet bullet in ObjectPool.Bullets)
-        {
-            if (bullet.alive) bullet.Destroy();
-        }
     }
 }

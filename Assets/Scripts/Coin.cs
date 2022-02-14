@@ -7,11 +7,14 @@ public class Coin : MonoBehaviour
     public float explosionRadius = 2f;
     public float explosionForce = 100f;
 
+    public bool alive { get { return gameObject.activeSelf; } }
+
     public CoinType CoinType { get {return type; } }
 
     private CoinType type;
     private float timer;
     private Rigidbody rb;
+    private Vector3 explosionPosition;
 
     private void Awake()
     {
@@ -21,14 +24,18 @@ public class Coin : MonoBehaviour
     public void Burst(CoinType type, Vector3 startPosition)
     {
         this.type = type;
-
         timer = lifeTime;
         transform.position = startPosition;
         transform.localScale = (int)type * Vector3.one;
         gameObject.SetActive(true);
-
         Vector3 forceDirection = Random.insideUnitSphere;
-        rb.AddExplosionForce(explosionForce, startPosition + forceDirection, explosionRadius);
+        explosionPosition = startPosition + forceDirection;
+        Invoke("Explode", 0.3f);
+    }
+
+    private void Explode()
+    {   
+        rb.AddExplosionForce(explosionForce, explosionPosition, explosionRadius);
     }
 
     private void Update()
@@ -42,6 +49,7 @@ public class Coin : MonoBehaviour
 
     public void Destroy()
     {
+        rb.velocity = Vector3.zero;
         gameObject.SetActive(false);
     }
 

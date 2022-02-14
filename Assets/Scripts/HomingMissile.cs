@@ -7,20 +7,18 @@ public class HomingMissile : MonoBehaviour
     public float rotateSpeed = 5;
 
     private Rigidbody rb;
-
     private Transform target;
 
-    public void Initialize()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        gameObject.SetActive(false);
     }
 
     public void LaunchAtTarget(Transform target, Transform startAt)
     {
-        this.target = target;        
+        this.target = target;
         transform.position = startAt.position;
-        transform.rotation = Quaternion.LookRotation(startAt.forward);
+        transform.rotation = Quaternion.LookRotation(startAt.forward);        
         gameObject.SetActive(true);
     }
 

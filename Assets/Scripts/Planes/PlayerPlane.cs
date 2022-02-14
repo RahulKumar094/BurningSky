@@ -109,7 +109,8 @@ public class PlayerPlane : MonoBehaviour, IAttribute
     {
         if (other.CompareTag(Tags.EnemyBulletTag))
         {
-            GameManager.Instance.PlayerCollideWithBullet(other.transform);
+            Bullet bullet = other.GetComponent<Bullet>();
+            GameManager.Instance.PlayerCollideWithBullet(bullet);
         }
         else if (other.CompareTag(Tags.EnemyTag))
         {
